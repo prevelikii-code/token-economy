@@ -237,9 +237,10 @@
 
   .task-name {
     font-size: 15px;
-    font-weight: 500;
+    font-weight: 400;
     flex: 1;
     line-height: 1.3;
+    font-family: 'Inter', -apple-system, system-ui, sans-serif;
   }
 
   /* WEEKS */
@@ -455,8 +456,8 @@
   .goal-row:active { opacity: 0.7; }
 
   .goal-row .checkbox { border-radius: 50%; }
-  .goal-row.done .checkbox { border-color: var(--yellow); background: var(--yellow); }
-  .goal-row.done .checkbox::after { content: '\2713'; color: var(--bg); font-weight: 700; font-size: 14px; }
+  .goal-row.done .checkbox { border-color: var(--green); background: var(--green); }
+  .goal-row.done .checkbox::after { content: '\2713'; color: #fff; font-weight: 700; font-size: 14px; }
   .goal-row.done .task-name { color: var(--text-secondary); text-decoration: line-through; }
 
   .goal-add {
