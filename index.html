@@ -867,9 +867,9 @@
   <!-- EMPTY -->
   <div class="empty" id="emptyState">
     <div class="empty-icon"></div>
-    <h3>Трекер задач и целей</h3>
+    <h3>Начни свой спринт</h3>
     <p>Добавь задачи на каждый день, назначь награду за неделю и отслеживай прогресс</p>
-    <button class="btn-start" onclick="openSettings()">Начать</button>
+    <button class="btn-start" onclick="openSettings()">Настроить</button>
   </div>
 </div>
 
@@ -1045,7 +1045,7 @@ function esc(s) { const d = document.createElement('div'); d.textContent = s; re
 
 function render() {
   const ok = state.startDate && state.tasks.length > 0;
-  ['statsBar','progressSection','todayPanel','weeksSection','weekView','rewardCard','footerActions'].forEach(id =>
+  ['statsBar','progressSection','todayPanel','weeksSection','weekView','rewardCard','goalsSection','footerActions'].forEach(id =>
     document.getElementById(id).classList.toggle('hidden', !ok)
   );
   document.getElementById('emptyState').classList.toggle('hidden', ok);

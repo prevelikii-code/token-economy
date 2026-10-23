@@ -1,4 +1,4 @@
-const CACHE_NAME = 'tracker-v3';
+const CACHE_NAME = 'tracker-v4';
 const ASSETS = ['./index.html', './manifest.json', './garet.ttf'];
 
 self.addEventListener('install', e => {
