@@ -12,15 +12,23 @@
 <link rel="apple-touch-icon" href="./icon-192.png">
 <link rel="icon" type="image/png" href="./icon-192.png">
 <title>Трекер задач и целей</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
+  @font-face {
+    font-family: 'Garet';
+    src: url('./garet.ttf') format('truetype');
+    font-weight: 400 700;
+    font-display: swap;
+  }
+
   :root {
     --bg: #000000;
     --surface: #121212;
     --card: #1c1c1e;
     --accent: #0095f6;
     --accent-soft: rgba(0, 149, 246, 0.12);
+    --yellow: #f5c518;
+    --yellow-soft: rgba(245, 197, 24, 0.12);
     --green: #4cd964;
     --green-soft: rgba(76, 217, 100, 0.12);
     --orange: #ff9500;
@@ -36,7 +44,7 @@
   * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
   body {
-    font-family: 'Inter', -apple-system, system-ui, sans-serif;
+    font-family: 'Garet', -apple-system, system-ui, sans-serif;
     background: var(--bg);
     color: var(--text);
     min-height: 100vh;
@@ -63,6 +71,7 @@
     font-size: 22px;
     font-weight: 700;
     letter-spacing: -0.03em;
+    color: var(--yellow);
   }
 
   .header-actions {
@@ -382,6 +391,121 @@
 
   .reward-badge.locked { background: var(--separator); color: var(--text-secondary); }
   .reward-badge.unlocked { background: var(--green-soft); color: var(--green); }
+
+  /* GOALS */
+  .goals-section { margin-bottom: 16px; }
+
+  .goals-tabs {
+    display: flex;
+    gap: 4px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    margin-bottom: 12px;
+  }
+
+  .goals-tabs::-webkit-scrollbar { display: none; }
+
+  .goal-tab {
+    padding: 8px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    background: var(--card);
+    color: var(--text-secondary);
+    white-space: nowrap;
+    flex-shrink: 0;
+    border: none;
+    font-family: inherit;
+    -webkit-user-select: none;
+    user-select: none;
+    transition: all 0.15s;
+  }
+
+  .goal-tab:active { transform: scale(0.95); }
+  .goal-tab.active { background: var(--yellow); color: var(--bg); }
+
+  .goal-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    background: var(--card);
+    margin-bottom: 2px;
+    cursor: pointer;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  .goal-row:first-child { border-radius: var(--radius) var(--radius) 0 0; }
+  .goal-row:last-child { border-radius: 0 0 var(--radius) var(--radius); margin-bottom: 0; }
+  .goal-row:only-child { border-radius: var(--radius); }
+  .goal-row:active { opacity: 0.7; }
+
+  .goal-row .checkbox { border-radius: 50%; }
+  .goal-row.done .checkbox { border-color: var(--yellow); background: var(--yellow); }
+  .goal-row.done .checkbox::after { content: '\2713'; color: var(--bg); font-weight: 700; font-size: 14px; }
+  .goal-row.done .task-name { color: var(--text-secondary); text-decoration: line-through; }
+
+  .goal-add {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+  }
+
+  .goal-add input {
+    flex: 1;
+    background: var(--card);
+    border: 1px solid var(--separator);
+    border-radius: 12px;
+    padding: 12px 14px;
+    color: var(--text);
+    font-size: 14px;
+    font-family: inherit;
+    outline: none;
+    -webkit-appearance: none;
+  }
+
+  .goal-add input:focus { border-color: var(--yellow); }
+  .goal-add input::placeholder { color: var(--text-secondary); opacity: 0.5; }
+
+  .goal-add-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    border: none;
+    background: var(--yellow);
+    color: var(--bg);
+    font-size: 20px;
+    font-weight: 700;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  .goal-add-btn:active { opacity: 0.8; }
+
+  .goals-empty {
+    text-align: center;
+    padding: 24px;
+    color: var(--text-secondary);
+    font-size: 13px;
+    background: var(--card);
+    border-radius: var(--radius);
+  }
+
+  .goal-delete {
+    border: none;
+    background: none;
+    color: var(--text-secondary);
+    font-size: 16px;
+    cursor: pointer;
+    padding: 4px;
+    opacity: 0.5;
+    flex-shrink: 0;
+  }
+
+  .goal-delete:active { opacity: 1; color: var(--red); }
 
   /* FOOTER ACTIONS */
   .footer-actions {
@@ -708,6 +832,19 @@
     <div class="reward-badge" id="rewardStatus"></div>
   </div>
 
+  <!-- GOALS -->
+  <div class="goals-section" id="goalsSection">
+    <div class="section-title" style="margin-top:4px">
+      <span>Цели</span>
+    </div>
+    <div class="goals-tabs" id="goalsTabs"></div>
+    <div id="goalsList"></div>
+    <div class="goal-add">
+      <input type="text" id="goalInput" placeholder="Новая цель" onkeydown="if(event.key==='Enter'){event.preventDefault();addGoal()}" />
+      <button class="goal-add-btn" onclick="addGoal()">+</button>
+    </div>
+  </div>
+
   <!-- ACTIONS -->
   <div class="footer-actions hidden" id="footerActions">
     <button class="footer-btn" onclick="exportData()">Экспорт</button>
@@ -799,7 +936,7 @@ let activeWeek = null;
 let tempTasks = [];
 
 function defaultState() {
-  return { startDate: null, tasks: [], reward: '', minCheckmarks: 7, checks: {}, celebratedWeeks: {} };
+  return { startDate: null, tasks: [], reward: '', minCheckmarks: 7, checks: {}, celebratedWeeks: {}, goals: { week: [], month: [], quarter: [], half: [], year: [] } };
 }
 
 function loadState() {
@@ -1117,6 +1254,80 @@ function resetConfirm() {
   }
 }
 
+// ============ GOALS ============
+const GOAL_PERIODS = [
+  { key: 'week', label: 'Неделя' },
+  { key: 'month', label: 'Месяц' },
+  { key: 'quarter', label: '3 мес' },
+  { key: 'half', label: '6 мес' },
+  { key: 'year', label: 'Год' }
+];
+
+let activeGoalPeriod = 'week';
+
+function ensureGoals() {
+  if (!state.goals) state.goals = {};
+  GOAL_PERIODS.forEach(p => { if (!state.goals[p.key]) state.goals[p.key] = []; });
+}
+
+function renderGoals() {
+  ensureGoals();
+  const tabs = document.getElementById('goalsTabs');
+  tabs.innerHTML = '';
+  GOAL_PERIODS.forEach(p => {
+    const t = document.createElement('div');
+    t.className = 'goal-tab' + (p.key === activeGoalPeriod ? ' active' : '');
+    const count = state.goals[p.key].filter(g => g.done).length;
+    const total = state.goals[p.key].length;
+    t.textContent = p.label + (total > 0 ? ` ${count}/${total}` : '');
+    t.onclick = () => { activeGoalPeriod = p.key; renderGoals(); };
+    tabs.appendChild(t);
+  });
+
+  const list = document.getElementById('goalsList');
+  list.innerHTML = '';
+  const goals = state.goals[activeGoalPeriod];
+
+  if (goals.length === 0) {
+    list.innerHTML = '<div class="goals-empty">Пока нет целей</div>';
+    return;
+  }
+
+  goals.forEach((goal, i) => {
+    const row = document.createElement('div');
+    row.className = 'goal-row' + (goal.done ? ' done' : '');
+    row.innerHTML = `<div class="checkbox"></div><div class="task-name">${esc(goal.text)}</div><button class="goal-delete" onclick="event.stopPropagation();deleteGoal(${i})">&#10005;</button>`;
+    row.onclick = () => toggleGoal(i);
+    list.appendChild(row);
+  });
+}
+
+function toggleGoal(i) {
+  ensureGoals();
+  state.goals[activeGoalPeriod][i].done = !state.goals[activeGoalPeriod][i].done;
+  saveState();
+  renderGoals();
+}
+
+function addGoal() {
+  ensureGoals();
+  const inp = document.getElementById('goalInput');
+  const v = inp.value.trim();
+  if (!v) return;
+  state.goals[activeGoalPeriod].push({ text: v, done: false });
+  inp.value = '';
+  saveState();
+  renderGoals();
+  inp.focus();
+}
+
+function deleteGoal(i) {
+  ensureGoals();
+  state.goals[activeGoalPeriod].splice(i, 1);
+  saveState();
+  renderGoals();
+}
+
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('./sw.js').catch(() => {});
 }
@@ -1130,6 +1341,7 @@ try {
 } catch(e) {}
 
 render();
+renderGoals();
 </script>
 </body>
 </html>
