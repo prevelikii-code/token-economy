@@ -1,11 +1,11 @@
 {
-  "name": "Token Economy — Трекер задач",
-  "short_name": "Token Economy",
-  "description": "Жетонная экономика — трекер выполнения задач на 90 дней",
+  "name": "Трекер задач и целей",
+  "short_name": "Трекер",
+  "description": "Отслеживание ежедневных задач и целей на 90 дней",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#0f0f13",
-  "theme_color": "#7c5cfc",
+  "background_color": "#000000",
+  "theme_color": "#000000",
   "orientation": "portrait",
   "icons": [
     {
