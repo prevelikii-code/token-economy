@@ -1307,11 +1307,14 @@ function renderGoals() {
     return;
   }
 
-  goals.forEach((goal, i) => {
+  const sorted = goals.map((g, i) => ({ ...g, idx: i }));
+  sorted.sort((a, b) => (b.done ? 1 : 0) - (a.done ? 1 : 0));
+
+  sorted.forEach(goal => {
     const row = document.createElement('div');
     row.className = 'goal-row' + (goal.done ? ' done' : '');
-    row.innerHTML = `<div class="checkbox"></div><div class="task-name">${esc(goal.text)}</div><button class="goal-delete" onclick="event.stopPropagation();deleteGoal(${i})">&#10005;</button>`;
-    row.onclick = () => toggleGoal(i);
+    row.innerHTML = `<div class="checkbox"></div><div class="task-name">${esc(goal.text)}</div><button class="goal-delete" onclick="event.stopPropagation();deleteGoal(${goal.idx})">&#10005;</button>`;
+    row.onclick = () => toggleGoal(goal.idx);
     list.appendChild(row);
   });
 }
